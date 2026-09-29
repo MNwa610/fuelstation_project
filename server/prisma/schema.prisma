@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum FuelStatus {
+  ПОЛНО
+  МАЛО
+  НЕТУ
+}
+
+enum FuelEventType {
+  MANUAL
+  SIMULATION
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  role         UserRole @default(USER)
+  createdAt    DateTime @default(now())
+}
+
+model Network {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  stations    Station[]
+}
+
+model Station {
+  id        String         @id @default(uuid())
+  networkId String
+  network   Network        @relation(fields: [networkId], references: [id])
+  name      String
+  address   String
+  lat       Float
+  lng       Float
+  phone     String?
+  isActive  Boolean        @default(true)
+  fuels     StationFuel[]
+}
+
+model FuelType {
+  id           String        @id @default(uuid())
+  code         String        @unique
+  name         String
+  stationFuels StationFuel[]
+}
+
+model StationFuel {
+  id             String      @id @default(uuid())
+  stationId      String
+  station        Station     @relation(fields: [stationId], references: [id])
+  fuelTypeId     String
+  fuelType       FuelType    @relation(fields: [fuelTypeId], references: [id])
+  status         FuelStatus  @default(AVAILABLE)
+  price          Float
+  capacityLiters Float
+  currentLiters  Float
+  events         FuelEvent[]
+
+  @@unique([stationId, fuelTypeId])
+}
+
+model FuelEvent {
+  id            String        @id @default(uuid())
+  stationFuelId String
+  stationFuel   StationFuel   @relation(fields: [stationFuelId], references: [id])
+  eventType     FuelEventType
+  oldLiters     Float
+  newLiters     Float
+  comment       String?
+  createdAt     DateTime      @default(now())
+}
