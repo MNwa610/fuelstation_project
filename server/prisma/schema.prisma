@@ -13,9 +13,9 @@ enum UserRole {
 }
 
 enum FuelStatus {
-  ПОЛНО
-  МАЛО
-  НЕТУ
+  AVAILABLE
+  LOW
+  OUT
 }
 
 enum FuelEventType {

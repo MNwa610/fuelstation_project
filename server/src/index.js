@@ -1,21 +1,14 @@
-import express from "express";
-import cors from "cors";
-import apiRoutes from "./routes/index.js";
-import { errorHandler } from "./middleware/errorHandler.js";
+import cron from "node-cron";
+import app from "./app.js";
+import { runSimulation } from "./services/simulation.service.js";
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json());
-
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+cron.schedule("0 0 * * *", () => {
+  runSimulation().catch((err) => {
+    console.error("Ошибка симуляции:", err.message);
+  });
 });
-
-app.use("/api/v1", apiRoutes);
-
-app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

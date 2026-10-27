@@ -7,4 +7,228 @@
 body {
   margin: 0;
   background: #f8fafc;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+}
+
+a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  background: #0f172a;
+  color: #fff;
+}
+
+.logo {
+  color: #fff;
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.nav a,
+.link-btn {
+  color: #e2e8f0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}
+
+.nav a.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.page.wide {
+  max-width: 1100px;
+}
+
+.page.narrow {
+  max-width: 420px;
+}
+
+.subtitle {
+  margin: 0 0 1rem;
+  color: #64748b;
+}
+
+.message {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+}
+
+.message.error {
+  color: #dc2626;
+}
+
+.hint {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filters input,
+.filters select,
+.form input,
+.admin-table input,
+.admin-table select {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.filters button,
+.form button,
+.btn,
+.admin-table button {
+  padding: 0.5rem 0.85rem;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.filters button:disabled,
+.admin-table button:disabled {
+  opacity: 0.6;
+}
+
+.map {
+  width: 100%;
+  height: 360px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.station-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.station-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: #fff;
+}
+
+.station-card h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.network {
+  margin: 0 0 0.25rem;
+  font-size: 0.875rem;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.address {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.fuel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.fuel-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.fuel-detail-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.fuel-detail {
+  display: grid;
+  gap: 0.25rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.btn {
+  display: inline-block;
+  margin: 0.5rem 0 1rem;
 }

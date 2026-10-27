@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -52,6 +52,14 @@ function calcStatus(current, capacity) {
 }
 
 async function main() {
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: "admin@gazprom.ru" },
+  });
+  if (existingAdmin) {
+    console.log("Seed skipped: данные уже есть");
+    return;
+  }
+
   await prisma.fuelEvent.deleteMany();
   await prisma.stationFuel.deleteMany();
   await prisma.station.deleteMany();

@@ -1,100 +1,68 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchStations } from "../api/stations.js";
-import { fuelStatusLabel, fuelTypeLabel } from "../utils/fuelLabels.js";
-import "./StationsPage.css";
-
-function statusColor(status) {
-  if (status === "AVAILABLE") return "#22c55e";
-  if (status === "LOW") return "#eab308";
-  return "#ef4444";
-}
+import FilterPanel from "../components/FilterPanel.jsx";
+import StationCard from "../components/StationCard.jsx";
+import StationsMap from "../components/StationsMap.jsx";
+import { filterStations, uniqueFuelTypes } from "../utils/filterStations.js";
+import { getCurrentPosition } from "../utils/geo.js";
 
 export default function StationsPage() {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notice, setNotice] = useState(null);
+  const [userPoint, setUserPoint] = useState(null);
+  const [locating, setLocating] = useState(false);
+  const [filters, setFilters] = useState({
+    fuelType: "",
+    status: "",
+    address: "",
+    radiusKm: "",
+  });
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchStations();
-        if (!cancelled) {
-          setStations(data);
-        }
-      } catch (e) {
-        if (!cancelled) {
-          setError(e instanceof Error ? e.message : "Неизвестная ошибка");
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
+    fetchStations()
+      .then(setStations)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="page">
-        <p className="message">Загрузка заправок…</p>
-      </div>
-    );
+  const filtered = useMemo(
+    () => filterStations(stations, filters, userPoint),
+    [stations, filters, userPoint]
+  );
+
+  async function locate() {
+    setLocating(true);
+    setNotice(null);
+    try {
+      setUserPoint(await getCurrentPosition());
+    } catch (e) {
+      setNotice(e.message);
+    } finally {
+      setLocating(false);
+    }
   }
 
-  if (error) {
-    return (
-      <div className="page">
-        <p className="message error">{error}</p>
-        <p className="hint">Убедитесь, что сервер запущен на порту 3000.</p>
-      </div>
-    );
-  }
-
-  if (stations.length === 0) {
-    return (
-      <div className="page">
-        <p className="message">Заправок пока нет.</p>
-      </div>
-    );
-  }
+  if (loading) return <p className="message">Загрузка заправок…</p>;
+  if (error) return <p className="message error">{error}</p>;
 
   return (
     <div className="page">
-      <header className="header">
-        <h1>Заправки Москвы</h1>
-        <p className="subtitle">Найдено: {stations.length}</p>
-      </header>
-
+      <h1>Заправки Москвы</h1>
+      <p className="subtitle">Найдено: {filtered.length}</p>
+      {notice && <p className="message error">{notice}</p>}
+      <FilterPanel
+        fuelTypes={uniqueFuelTypes(stations)}
+        filters={filters}
+        onChange={setFilters}
+        onLocate={locate}
+        locating={locating}
+      />
+      <StationsMap stations={filtered} userPoint={userPoint} />
       <ul className="station-list">
-        {stations.map((station) => (
-          <li key={station.id} className="station-card">
-            <h2>{station.name}</h2>
-            <p className="network">{station.network.name}</p>
-            <p className="address">{station.address}</p>
-            <ul className="fuel-list">
-              {station.fuels.map((fuel) => (
-                <li key={fuel.id} className="fuel-item">
-                  <span
-                    className="status-dot"
-                    style={{ backgroundColor: statusColor(fuel.status) }}
-                    title={fuelStatusLabel(fuel.status)}
-                  />
-                  <span>
-                    {fuelTypeLabel(fuel.fuelType)} — {fuelStatusLabel(fuel.status)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </li>
+        {filtered.map((station) => (
+          <StationCard key={station.id} station={station} />
         ))}
       </ul>
     </div>
